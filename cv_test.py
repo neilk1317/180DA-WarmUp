@@ -17,19 +17,15 @@ while(1):
     # Threshold the HSV image 
     mask = cv.inRange(hsv, lower_hsv, upper_hsv)
 
-    #_,thresh = cv.threshold(mask,127,255,0)
-    #contours, hierarchy = cv.findContours(thresh,1,2)
-    #cnt = contours[0]
+    _,thresh = cv.threshold(mask,127,255,0)
+    contours, hierarchy = cv.findContours(thresh, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+    
+    if len(contours):
+        cont = max(contours, key=cv.contourArea)
+        x,y,w,h = cv.boundingRect(cont)
+        cv.rectangle(frame,(x,y),(x+w,y+h),(255,0,0),2)
 
-
-    # Bitwise-AND mask and original image
-    res = cv.bitwise_and(frame,frame, mask= mask)
-
-
-    #cv.imshow('frame',frame)
-    cv.imshow('mask',mask)
-    #cv.imshow('res',res)
-
+    cv.imshow('frame',frame)
 
     k = cv.waitKey(5) & 0xFF
     if k == 27:
