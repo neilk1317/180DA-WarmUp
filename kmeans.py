@@ -1,3 +1,14 @@
+"""
+In this code I partially made use of the KMeans tutorial linked in the lab instructions.
+Specifically I made use of the find_histogram function and used that to find the most 
+dominant color. Prior to that though, we had to first specify a region of interest and 
+I did this by extracting a portion of our current frame (cropped_frame) and surrounding
+it with a rectangle. Furthermore I added some text above it describing what it is. I then
+used this cropped region and again used some of the code from the KMeans tutorial to generate
+the histograms. After determining the dominant color I created a separate rectangle, except this
+one would be completely filled with the dominant color.
+"""
+
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt

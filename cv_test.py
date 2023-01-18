@@ -1,3 +1,12 @@
+"""
+The bulk of this code was taken from the Color Spaces tutorial where the object tracking
+was described. From this I also saw some examples of using contours after initially 
+applying a black/white threshold as seen on lines 28-29. This essentially further contrasts
+the mask and applies contours around anything that matches the specified color range. 
+Lastly, I look for the largest contour by area and apply a bounding box around it to track
+the largest object that is within our specified color range.
+"""
+
 import cv2 as cv
 import numpy as np
 
