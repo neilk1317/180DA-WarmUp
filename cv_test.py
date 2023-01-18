@@ -2,6 +2,8 @@ import cv2 as cv
 import numpy as np
 
 cap = cv.VideoCapture(0)
+width = cap.get(3)
+height = cap.get(4)
 
 while(1):
     # Take each frame
