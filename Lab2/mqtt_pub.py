@@ -1,3 +1,12 @@
+"""
+This file is primarily the same as the one downloaded from Bruinlearn. The modifications made are for the ping-ponging
+of messages where the on_message function is modified so that it immedietely sends a response back if it receives a message
+from a specific topic and then increments the counter. In the while loop at the bottom an initial message is sent as this 
+client is the one that starts the ping-pong. This can be further expanded to accomedate different users/devices by assigning 
+them their own personal identifier through the topic string and performing various commands accordingly.
+"""
+
+
 import paho.mqtt.client as mqtt
 import numpy as np
 
