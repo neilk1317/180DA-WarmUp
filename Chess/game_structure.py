@@ -4,8 +4,8 @@ def main():
     board = chess.Board()
 
     while (not board.is_checkmate()):
-        print(board)
         while True:
+            print(board)
             if board.is_check():
                 print("You are in check!")
             print(board.legal_moves)
@@ -16,7 +16,10 @@ def main():
                 if move in board.legal_moves:
                     break
             except:
-                print('Invalid move try again')
+                if board.is_pinned(board.turn,chess.parse_square(start_square)):
+                    print('Square ' + start_square + ' is pinned to your king!')
+                else:
+                    print('Invalid move try again')
 
         board.push(move)
     print(board.outcome().result())
