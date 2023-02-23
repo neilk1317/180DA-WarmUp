@@ -1,24 +1,40 @@
 import paho.mqtt.client as mqtt
 import tkinter as tk
+import os
 from tkinter import *
 from PIL import ImageTk, Image
 
+#Create Tkinter Window
 window = tk.Tk()
 window.title('Chess Test')
 window.geometry('800x800')
 
-bg = tk.Canvas(window, width=720, height=720)
+#Load in the piece images which will be used to create image objects
+image_dict = {}
+piece_path = 'C:/Users/neilk/Documents/ECE180/Chess/Piece_Images'
+for files in os.listdir(piece_path):
+    name = files.split('.')[0]
+    image_dict[name] = tk.PhotoImage(file=piece_path+'/'+files).subsample(10)
 
-for x in range(80,641, 80):
-    for y in range(10, 571, 80):
-        bg.create_rectangle(x, y, x+80, y+80)
+#Initialize grid that will store image objects
+grid_dict = {}
+chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+nums = ['1', '2', '3', '4', '5', '6', '7', '8']
+for char in chars:
+    for num in nums:
+        grid_dict[char+num] = None
+
+b_width, b_height = 720, 720
+square_size = 80
+num_squares = 8
+x_offset = 80
+y_offset = 10
+bg = tk.Canvas(window, width=b_width, height=b_height)
+for x in range(x_offset, x_offset + square_size * (num_squares - 1) + 1, square_size):
+    for y in range(y_offset, y_offset + square_size * (num_squares - 1) + 1, square_size):
+        bg.create_rectangle(x, y, x + square_size, y + square_size)
+        img = bg.create_image(x + (square_size / 2), y + (square_size / 2), image=image_dict['bishop_white'])
 
 bg.place(x=0,y=0,anchor="nw")
-
-# img = (Image.open('chessboard_blank.png'))
-# img = img.resize((700,700), Image.ANTIALIAS)
-# img = ImageTk.PhotoImage(img)
-# background = tk.Label(window, image=img, bd=0)
-# background.place(x=0,y=0, anchor="nw")
 
 window.mainloop()
