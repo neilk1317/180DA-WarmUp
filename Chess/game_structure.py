@@ -6,6 +6,8 @@ def main():
     while (not board.is_checkmate()):
         print(board)
         while True:
+            if board.is_check():
+                print("You are in check!")
             print(board.legal_moves)
             start_square = input('Starting square:')
             end_square = input('Ending square:')
