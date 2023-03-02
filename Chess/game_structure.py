@@ -1,8 +1,26 @@
 import chess
+import paho.mqtt.client as mqtt
 
 def main():
-    board = chess.Board()
 
+    def on_connect(client, userdata, flags, rc):
+        print("Connection returned result: " + str(rc))
+
+    # The callback of the client when it disconnects.
+    def on_disconnect(client, userdata, rc):
+        if rc != 0:
+            print('Unexpected Disconnect')
+        else:
+            print('Expected Disconnect')
+
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_disconnect = on_disconnect
+
+    client.connect_async('mqtt.eclipseprojects.io')
+    client.loop_start()
+    
+    board = chess.Board()
     while (not board.is_checkmate()):
         while True:
             print(board)
@@ -24,6 +42,7 @@ def main():
             try:
                 move = board.find_move(start, end)
                 if move in board.legal_moves:
+                    client.publish("ece180d/central", start_square+end_square, qos=1)
                     break
             except:
                 if board.is_pinned(board.turn,start):
@@ -35,6 +54,7 @@ def main():
 
         board.push(move)
     print(board.outcome().result())
+    client.loop_stop()
     
 if __name__ == '__main__':
     main()
