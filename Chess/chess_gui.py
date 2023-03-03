@@ -18,8 +18,8 @@ class Chess_Gui(tk.Canvas):
         #Load in the piece images which will be used to create image objects
         self.image_dict = {}
 
-        #piece_path = 'C:/Users/neilk/Documents/ECE180/Chess/Piece_Images'
-        self.piece_path = 'D:/Documents/ECE-180DA/Lab 1/180DA-Warmup/Chess/Piece_Images'
+        self.piece_path = 'C:/Users/neilk/Documents/ECE180/Chess/Piece_Images'
+        #self.piece_path = 'D:/Documents/ECE-180DA/Lab 1/180DA-Warmup/Chess/Piece_Images'
         for files in os.listdir(self.piece_path):
             name = files.split('.')[0]
             self.image_dict[name] = tk.PhotoImage(file=self.piece_path+'/'+files).subsample(10)
@@ -86,6 +86,7 @@ class Chess_Gui(tk.Canvas):
             if existing_img is not None:
                 self.delete(existing_img)
             #Updates the grid dict and moves the image
+            self.grid_dict[start_letter+start_num] = None
             self.grid_dict[end_letter+end_num] = start_img
             self.move(start_img, end_x - start_x, end_y - start_y)
 

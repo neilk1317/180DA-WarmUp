@@ -35,13 +35,21 @@ def main():
                 continue
             end_square = input('Ending square:')
             try:
-                print('Not a valid square')
                 end = chess.parse_square(end_square)
             except:
+                print('Not a valid square')
                 continue
             try:
                 move = board.find_move(start, end)
                 if move in board.legal_moves:
+                    if board.king(board.turn) == start and abs(end-start) == 2:
+                        if end_square[0] == "g":
+                            rook_start = chess.square_name(end+1)
+                            rook_end = chess.square_name(end-1)
+                        else:
+                            rook_start = chess.square_name(end-2)
+                            rook_end = chess.square_name(end+1)
+                        client.publish("ece180d/central", rook_start+rook_end, qos=1)
                     client.publish("ece180d/central", start_square+end_square, qos=1)
                     break
             except:
