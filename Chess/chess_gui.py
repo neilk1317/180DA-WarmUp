@@ -69,6 +69,11 @@ class Chess_Gui(tk.Canvas):
         self.grid_dict[letter+num] = img
     
     def symbol_to_img_name(self, symbol:str):
+        """
+        Helper function to convert python-chess symbol to image name used for displaying
+
+        symbol: Symbol of the piece 
+        """
         if symbol.isupper():
             my_color = 'white'
         else:
@@ -80,6 +85,12 @@ class Chess_Gui(tk.Canvas):
         return img_name
 
     def board_to_img(self, board:chess.Board):
+        """
+        Parses the board object and updates the display based on the current locations of pieces
+        Call this function after a move has been pushed to the board.
+
+        board: chess.Board object to be used to generate the display. 
+        """
         board_dict = board.piece_map()
         for key in range(64):
             if key in board_dict.keys():
