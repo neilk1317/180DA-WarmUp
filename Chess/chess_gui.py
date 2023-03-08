@@ -1,12 +1,15 @@
 import paho.mqtt.client as mqtt
 import tkinter as tk
 import numpy as np
+import chess
 import os
 from tkinter import *
 
 class Chess_Gui(tk.Canvas):
     
-    def __init__(self, parent, b_width, b_height, *args, **kwargs):
+    def __init__(self, board:chess.Board, parent, b_width, b_height, *args, **kwargs):
+        self.board = board
+
         tk.Canvas.__init__(self, parent, width=b_width, height = b_height, *args, **kwargs)
         self.parent = parent
         self.b_width, self.b_height = 720, 720
@@ -18,8 +21,8 @@ class Chess_Gui(tk.Canvas):
         #Load in the piece images which will be used to create image objects
         self.image_dict = {}
 
-        self.piece_path = 'C:/Users/neilk/Documents/ECE180/Chess/Piece_Images'
-        #self.piece_path = 'D:/Documents/ECE-180DA/Lab 1/180DA-Warmup/Chess/Piece_Images'
+        #self.piece_path = 'C:/Users/neilk/Documents/ECE180/Chess/Piece_Images'
+        self.piece_path = 'D:/Documents/ECE-180DA/Lab 1/180DA-Warmup/Chess/Piece_Images'
         for files in os.listdir(self.piece_path):
             name = files.split('.')[0]
             self.image_dict[name] = tk.PhotoImage(file=self.piece_path+'/'+files).subsample(10)
@@ -65,6 +68,36 @@ class Chess_Gui(tk.Canvas):
             self.delete(existing_img)
         self.grid_dict[letter+num] = img
     
+    def symbol_to_img_name(self, symbol:str):
+        if symbol.isupper():
+            my_color = 'white'
+        else:
+            my_color = 'black'
+        
+        idx = chess.PIECE_SYMBOLS.index(symbol.lower())
+        piece_name = chess.PIECE_NAMES[idx]
+        img_name = piece_name + "_" + my_color
+        return img_name
+
+    def board_to_img(self, board:chess.Board):
+        board_dict = board.piece_map()
+        for key in range(64):
+            if key in board_dict.keys():
+                val = board_dict[key]
+                key = chess.square_name(key)    #Converts to letter+num format
+                letter = key[0]
+                num = key[1]
+
+                val = val.symbol()              #Gets character of symbol
+                img_name = self.symbol_to_img_name(val)
+
+                self.place_image(letter, num, img_name)
+            else:
+                key = chess.square_name(key)
+                existing_img = self.grid_dict[key]
+                if existing_img is not None:
+                    self.delete(existing_img)
+
     def move_image(self, start_letter:str, start_num:str, end_letter:str, end_num:str):
         """
         Moves the image from the starting square to the ending square. Overwrites any existing image at end square.
@@ -149,25 +182,34 @@ def on_disconnect(client, userdata, rc):
 # (won't be used if only publishing, but can still exist)
 def on_message(client, userdata, message):
     gui = userdata['gui']
+    board = userdata['board']
     if(message.topic == "ece180d/central"):
         results = str(message.payload.decode())
         start_letter = results[0]
         start_num = results[1]
         end_letter = results[2]
         end_num = results[3]
-        gui.move_image(start_letter,  start_num, end_letter, end_num)
+        
+        start_square = chess.parse_square(start_letter+start_num)
+        end_square = chess.parse_square(end_letter+end_num)
+        move = board.find_move(start_square, end_square)
+        board.push(move)
+
+        gui.board_to_img(board)
+        #gui.move_image(start_letter,  start_num, end_letter, end_num)
 
 
 
 if __name__ == "__main__":
     #Create Tkinter Window
+    board = chess.Board()
     window = tk.Tk()
     window.title('Chess Test')
     window.geometry('800x800')
-    gui = Chess_Gui(window, 720, 720)
+    gui = Chess_Gui(board,window, 720, 720)
     gui.place(x=0,y=0,anchor="nw")
 
-    client_userdata = {'gui':gui}
+    client_userdata = {'gui':gui, 'board':board}
     client = mqtt.Client(userdata=client_userdata)
     client.on_connect = on_connect
     client.on_disconnect = on_disconnect
