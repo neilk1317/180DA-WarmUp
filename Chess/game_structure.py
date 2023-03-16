@@ -1,5 +1,6 @@
 import chess
 import paho.mqtt.client as mqtt
+from chess_speech import speech_to_move
 
 def main():
 
@@ -27,13 +28,17 @@ def main():
             if board.is_check():
                 print("You are in check!")
             print(board.legal_moves)
-            start_square = input('Starting square:')
+            #start_square = input('Starting square:')
+            print("Speak starting square:")
+            start_square = speech_to_move()
             try:
                 start = chess.parse_square(start_square)
             except:
                 print('Not a valid square')
                 continue
-            end_square = input('Ending square:')
+            #end_square = input('Ending square:')
+            print("Speak ending square")
+            end_square = speech_to_move()
             try:
                 end = chess.parse_square(end_square)
             except:
